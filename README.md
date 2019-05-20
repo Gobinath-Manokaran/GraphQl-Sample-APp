@@ -1,9 +1,9 @@
 # GraphQl-Sample-APp
 
-#Vue App
+# Vue App
 
 npm run server
 
-#server APP
+# server APP
 
 npm start
