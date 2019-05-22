@@ -1,142 +1,26 @@
 <template>
-  <v-container
-    fill-height
-    fluid
-    grid-list-xl>
-    <v-layout
-      justify-center
-      wrap
-    >
-      <v-flex
-        xs12
-        md8
-      >
-        <material-card
-          color="green"
-          title="Edit Profile"
-          text="Complete your profile"
-        >
+  <v-container fill-height fluid grid-list-xl>
+    <v-layout justify-center wrap>
+      <v-flex xs12>
+        <material-card color="green" title="Edit Profile">
           <v-form>
             <v-container py-0>
               <v-layout wrap>
-                <v-flex
-                  xs12
-                  md4
-                >
-                  <v-text-field
-                    label="Company (disabled)"
-                    disabled/>
+                <v-flex xs12 md4>
+                  <v-text-field class="purple-input" label="Name" :value='patient.Name' id='Name'/>
                 </v-flex>
-                <v-flex
-                  xs12
-                  md4
-                >
-                  <v-text-field
-                    class="purple-input"
-                    label="User Name"
-                  />
+                <v-flex xs12 md4>
+                  <v-text-field label="Email" class="purple-input" :value='patient.email' id='email'/>
                 </v-flex>
-                <v-flex
-                  xs12
-                  md4
-                >
-                  <v-text-field
-                    label="Email Address"
-                    class="purple-input"/>
+                <v-flex xs12 md4>
+                  <v-text-field label="Mobile" class="purple-input" :value='patient.mobile' id='mobile'/>
                 </v-flex>
-                <v-flex
-                  xs12
-                  md6
-                >
-                  <v-text-field
-                    label="First Name"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md6
-                >
-                  <v-text-field
-                    label="Last Name"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md12
-                >
-                  <v-text-field
-                    label="Adress"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    label="City"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    label="Country"
-                    class="purple-input"/>
-                </v-flex>
-                <v-flex
-                  xs12
-                  md4>
-                  <v-text-field
-                    class="purple-input"
-                    label="Postal Code"
-                    type="number"/>
-                </v-flex>
-                <v-flex xs12>
-                  <v-textarea
-                    class="purple-input"
-                    label="About Me"
-                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                  />
-                </v-flex>
-                <v-flex
-                  xs12
-                  text-xs-right
-                >
-                  <v-btn
-                    class="mx-0 font-weight-light"
-                    color="success"
-                  >
-                    Update Profile
-                  </v-btn>
+                <v-flex xs12 text-xs-right>
+                  <v-btn class="mx-0 font-weight-light" color="success" @click="updateProfile">Update Profile</v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
           </v-form>
-        </material-card>
-      </v-flex>
-      <v-flex
-        xs12
-        md4
-      >
-        <material-card class="v-card-profile">
-          <v-avatar
-            slot="offset"
-            class="mx-auto d-block"
-            size="130"
-          >
-            <img
-              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
-            >
-          </v-avatar>
-          <v-card-text class="text-xs-center">
-            <h6 class="category text-gray font-weight-thin mb-3">CEO / CO-FOUNDER</h6>
-            <h4 class="card-title font-weight-light">Alec Thompson</h4>
-            <p class="card-description font-weight-light">Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
-            <v-btn
-              color="success"
-              round
-              class="font-weight-light"
-            >Follow</v-btn>
-          </v-card-text>
         </material-card>
       </v-flex>
     </v-layout>
@@ -144,7 +28,55 @@
 </template>
 
 <script>
+import gql from "graphql-tag";
+let urlParams = new URLSearchParams(window.location.search);
+let patient_id = urlParams.get('id') ? urlParams.get('id') : 1
+const patientsQuery = gql`
+  query patientsDetail {
+    patient(id:${patient_id}){
+      id
+      Name
+      mobile
+      email
+    }
+  }
+  `
 export default {
-  //
-}
+  data () {
+    return {
+      postId: this.$route.query.id,
+      patient : {}
+    }
+  },
+  methods: {
+    updateProfile () {
+      const updatePatient = gql`
+        mutation updatePatient($id: Int!, $Name: String, $email: String, $mobile: String) {
+          updatePatient(id: $id, Name: $Name, email: $email, mobile: $mobile) {
+            id
+            Name
+            email
+            mobile
+          }
+        }
+      `
+      this.$apollo.mutate({
+        mutation: updatePatient,
+        variables: {
+          id: this.postId,
+          Name: document.getElementById('Name').value,
+          email: document.getElementById('email').value,
+          mobile: document.getElementById('mobile').value
+        }
+      });
+      this.$router.push('/dashboard?id' + this.postId)
+    }
+  },
+  apollo: {
+    // Local state 'items' data
+    patient: {
+      query: patientsQuery
+    }
+  },
+};
 </script>

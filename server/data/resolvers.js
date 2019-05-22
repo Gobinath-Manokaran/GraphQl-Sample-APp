@@ -185,7 +185,7 @@ const resolveFunctions = {
   },
   Mutation: {
     upvotePost(_, { postId }) {
-      const post = posts.find(post => post.id === postId)
+      const post = patients.find(post => post.id === postId)
       if (!post) {
         throw new Error(`Couldn't find post with id ${postId}`);
       }
@@ -193,6 +193,13 @@ const resolveFunctions = {
       pubsub.publish('postUpvoted', post);
       return post;
     },
+    updatePatient (_,{id, Name, email, mobile}) {
+      const patient = patients.find(patient => patient.id === id)
+      patient.Name = Name
+      patient.email = email
+      patient.mobile = mobile
+      return patient
+    }
   },
   Subscription: {
     postUpvoted(post) {

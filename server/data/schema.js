@@ -32,6 +32,7 @@ type Mutation {
   upvotePost (
     postId: Int!
   ): Post
+  updatePatient (id: Int!, Name: String, email: String, mobile: String): Patient
 }
 
 type Subscription {

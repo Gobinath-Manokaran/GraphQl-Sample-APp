@@ -21,6 +21,7 @@
             <h4 class="card-title font-weight-thin">{{patient.Name}}</h4>
             <p class="card-description profile-width font-weight-thin">Email: {{patient.email}} | DOB: {{patient.DOB}} | Phone: {{patient.mobile}}</p>
             <p class="card-description profile-width font-weight-thin">City: {{patient.city}}</p>
+            <router-link class="toolbar-items" :to="'/user-profile?id='+$route.query.id">Edit Profile</router-link>
           </v-card-text>
         </material-card>
       </v-flex>
